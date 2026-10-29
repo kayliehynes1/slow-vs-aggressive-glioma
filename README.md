@@ -2,7 +2,7 @@
 
 A gene expression and survival analysis of 667 glioma patients from The Cancer Genome Atlas (TCGA), built on the 2016 Ceccarelli et al. paper in *Cell*.
 
-## The question
+## The Question
 
 Gliomas are brain tumors that range from slow growing to very aggressive. Doctors have long sorted them by grade, which is how abnormal the tumor cells look under a microscope. The Ceccarelli paper found that a gene mutation called IDH tells you more about how a patient will do than grade does. I wanted to see this for myself in the data and ask three things.
 
@@ -10,7 +10,7 @@ Gliomas are brain tumors that range from slow growing to very aggressive. Doctor
 2. Which biological pathways do those genes point to?
 3. Do those groups really live different lengths of time?
 
-## The short answer
+## The Short Answer
 
 - IDH wild-type tumors switch on genes for scar tissue, inflammation and immune cells. IDH mutant tumors keep more activity in genes for brain cell signaling.
 - The same pathways turn up when comparing glioblastoma (the most aggressive grade) with lower grade tumors. Glioblastomas show more cell division, DNA repair and blood vessel growth.
@@ -28,19 +28,19 @@ All data is public and comes from [cBioPortal](https://www.cbioportal.org/datase
 | `lgg_tcga_pan_can_atlas_2018` | Gene expression for lower grade glioma, plus newer clinical data |
 | `gbm_tcga_pan_can_atlas_2018` | Gene expression for glioblastoma, plus newer clinical data |
 
-The files used from each study are `data_clinical_patient.txt`, `data_clinical_sample.txt` and `data_mrna_seq_v2_rsem.txt` (expression only, in the two PanCan studies). The data is not stored in this repository. See "How to run it" below.
+The files used from each study are `data_clinical_patient.txt`, `data_clinical_sample.txt` and `data_mrna_seq_v2_rsem.txt` (expression only, in the two PanCan studies). The raw downloads are not stored in this repository. See "How to run it" below. The `csv` folder holds my results tables, plus two patient tables the notebooks create from the public data.
 
-## What I did
+## What I Did
 
 | Step | Notebook | What it does |
 | --- | --- | --- |
-| 1 and 2 | `01_load_and_explore.ipynb` | Loads the data, cleans it, matches patients across the downloads, and checks the numbers against the paper |
+| 1 and 2 | `data_exploration.ipynb` | Loads the data, cleans it, matches patients across the downloads, and checks the numbers against the paper |
 | 3 | `02_define_groups.ipynb` | Defines the patient groups and the three comparisons, and draws a PCA plot |
-| 4 | `03_differential_expression.ipynb` | Finds genes that differ between groups, with a multiple-testing correction |
-| 5 | `04_pathways.ipynb` | Finds which pathways those genes belong to |
-| 6 | `05_survival.ipynb` | Kaplan-Meier survival curves, log-rank tests and Cox models |
+| 4 | `differential_expression.ipynb` | Finds genes that differ between groups, with a multiple-testing correction |
+| 5 | `pathways.ipynb` | Finds which pathways those genes belong to |
+| 6 | `survival.ipynb` | Kaplan-Meier survival curves, log-rank tests and Cox models |
 
-### Key decisions
+### Key Decisions
 
 - **Groups by IDH status, not grade.** More than half of IDH wild-type tumors are glioblastomas, so a plain mutant versus wild-type comparison could mix up an IDH effect with a grade effect. I ran three comparisons to separate them.
   - **A.** IDH wild-type versus IDH mutant, everyone (234 versus 426 patients).
@@ -114,7 +114,7 @@ Inside IDH wild-type tumors, higher CHI3L1 activity went with shorter survival (
 - **Observational data.** A gene or pathway that differs between groups is not shown to cause aggressive disease.
 - **CHI3L1 and tumor type.** CHI3L1 is also higher in glioblastoma, and the survival models did not include tumor type.
 
-## How to run it
+## How to Run It
 
 1. Install Python 3.10 or newer and these packages.
 
@@ -125,19 +125,19 @@ Inside IDH wild-type tumors, higher CHI3L1 activity went with shorter survival (
    The same list is in `requirements.txt`, so `pip install -r requirements.txt` also works.
 
 2. Download the three studies from [cBioPortal](https://www.cbioportal.org/datasets) and unzip them into one folder at `~/Desktop/PROJECT_4_PORT/`. If you use a different location, change the `data_dir` line near the top of each notebook.
-3. Run the notebooks in order, from `01_load_and_explore.ipynb` to `05_survival.ipynb`. Each one saves files that the next one reads, into the folders `csv/` and `figures/`. Notebook 1 also saves the cleaned expression table inside the data folder.
-4. Notebook 5 needs an internet connection for the pathway lists, which come from Enrichr through the `gseapy` package.
+3. Run the notebooks in this order. `data_exploration.ipynb`, `02_define_groups.ipynb`, `differential_expression.ipynb`, `pathways.ipynb`, and then `survival.ipynb`. Each one saves files that the next one reads, into the folders `csv/` and `figures/`. The first notebook also saves the cleaned expression table inside the data folder.
+4. `pathways.ipynb` needs an internet connection for the pathway lists, which come from Enrichr through the `gseapy` package.
 
-## Repository contents
+## Repository Contents
 
 ```
-01_load_and_explore.ipynb
+data_exploration.ipynb
 02_define_groups.ipynb
-03_differential_expression.ipynb
-04_pathways.ipynb
-05_survival.ipynb
+differential_expression.ipynb
+pathways.ipynb
+survival.ipynb
 requirements.txt
-csv/        gene and pathway results for each comparison
+csv/        gene and pathway results for each comparison, plus the patient tables
 figures/    all figures used above
 ```
 
